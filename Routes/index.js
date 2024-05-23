@@ -6,9 +6,9 @@ const upload = require('../Middleware/multer')
 
 module.exports = function() {
 
-    router.get('/pronostico/', pronosticosController.obtenervariable)
+    router.get('/pronostico/:fecha', pronosticosController.obtenerpronostico)
 
-    router.post('/pronostico', upload.array('imagen'), pronosticosController.subirpronostico)
+    router.post('/pronostico', pronosticosController.subirImagen, pronosticosController.subirpronostico)
 
     return router
 }

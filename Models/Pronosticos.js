@@ -18,3 +18,13 @@ const pronosticosSchema = new Schema({
 })
 
 module.exports = mongoose.model('Pronosticos', pronosticosSchema)
+
+
+
+//   {
+// 
+//      variable
+//      fecha
+//      archivo [string]
+// 
+//   }
