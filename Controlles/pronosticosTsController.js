@@ -1,4 +1,4 @@
-const Pronosticos = require('../Models/Pronosticos')
+const Pronosticos = require('../Models/PronosticosTs')
 const multer = require('multer')
 const shortid = require('shortid')
 const fs = require('fs')
@@ -6,7 +6,7 @@ const fs = require('fs')
 const configuracionMulter = {
     storage: fileStorage = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, __dirname+'../../uploads/');
+            cb(null, __dirname+'../../uploads/test/');
         },
         filename: (req, file, cb) => {
             //const extension = file.mimetype.split('/')[1];
@@ -24,11 +24,6 @@ const configuracionMulter = {
 
 // pasar la configuración y el campo
 const upload = multer(configuracionMulter).single('archivo');
-
-exports.obtenervariable = (req, res, next) => {
-
-    res.json({mensaje: 'Hola tu variable es:' + variable})
-}
 
 exports.obtenerpronostico = async (req, res, next) => {
 
@@ -61,13 +56,28 @@ exports.subirImagen = (req, res, next) => {
 }
 
 exports.subirpronostico = async (req, res, next) => {
-
-    const pronostico = new Pronosticos(req.body)
-
+    const { fecha } = req.params
+    
     try{
-        if(req.file.filename) {
-            pronostico.archivo = req.file.filename
+        const pronostico =  await Pronosticos.findOne({ fecha: fecha })
+
+        const newPronostico = {
+            variable: req.body.variable,
+            hora: req.body.hora,
+            archivo: req.file.filename
         }
+
+        if(!pronostico) {
+            const testData = new Pronosticos({
+                fecha,
+                propiedades: newPronostico
+            })
+            await testData.save()
+            res.status(200).json({ mensaje: "Pronostico agregado" })
+            return
+        }
+
+        pronostico.propiedades.push(newPronostico)
         await pronostico.save()
         res.status(200).json({ mensaje: "Pronostico agregado" })
     } catch(error) {
@@ -84,5 +94,3 @@ exports.obtenerpronosticos = async (req, res, next) => {
         next()
     }
 }
-
-
