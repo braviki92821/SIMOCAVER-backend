@@ -29,7 +29,7 @@ exports.obtenerpronostico = async (req, res, next) => {
 
     try {
         const { fecha } = req.params
-        const pronostico = await Pronosticos.find({ fecha })
+        const pronostico = await Pronosticos.findOne({ fecha })
         res.json(pronostico)
     } catch (error) {
         next()
