@@ -41,12 +41,12 @@ exports.subirImagen = (req, res, next) => {
         if(error) {
             if(error instanceof multer.MulterError) {
                 if(error.code === 'LIMIT_FILE_SIZE') {
-                    req.json({ mensaje: 'El archivo es muy grande' })
+                    res.json({ mensaje: 'El archivo es muy grande' })
                 } else {
-                    req.json({ mensaje: error.message })
+                    res.json({ mensaje: error.message })
                 }
             } else if(error.hasOwnProperty('message')) {
-                req.json({ mensaje: error.message })
+                res.json({ mensaje: error.message })
             }
             return next()
         } else {
@@ -57,7 +57,6 @@ exports.subirImagen = (req, res, next) => {
 
 exports.subirpronostico = async (req, res, next) => {
     const { fecha } = req.params
-    
     try{
         const pronostico =  await Pronosticos.findOne({ fecha: fecha })
 
