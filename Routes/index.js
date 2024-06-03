@@ -18,5 +18,7 @@ module.exports = function() {
 
     router.post('/pronosticotest/:fecha', pronosticosTsController.subirImagen, pronosticosTsController.subirpronostico)
 
+    router.put('/pronosticotest/:fecha', pronosticosTsController.subirImagen, pronosticosTsController.editarPronostico)
+
     return router
 }

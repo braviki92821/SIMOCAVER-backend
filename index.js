@@ -16,6 +16,7 @@ const app = express()
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended:true }))
+
   
 // const listaBlanca = ['http://localhost:4200']
 
