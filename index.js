@@ -6,9 +6,11 @@ const path = require('path')
 const cors = require('cors')
 require('dotenv').config({path: '.env'})
 require('./Models/Pronosticos')
+const host = '127.0.0.1'
+const port = 3000 || process.env.PORT
 
 mongosee.Promise = global.Promise
-mongosee.connect('mongodb://localhost/simocaver', {
+mongosee.connect(process.env.SERVERMONGODB, {
   useNewUrlParser: true
 })
 
@@ -38,4 +40,6 @@ app.use(cors())
 app.use('/', routes())
 app.use("/uploads", express.static(path.resolve(__dirname, 'uploads')));
 
-app.listen(3000)
+app.listen(port, host, () => {
+  console.log('http://'+host+':'+port)
+})

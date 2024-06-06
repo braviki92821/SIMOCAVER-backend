@@ -9,6 +9,10 @@ const pronosticosTsSchema = new Schema({
         variable: String,
         hora: Number,
         archivo: String
+    }],
+    graficas: [{
+        variable: String,
+        archivo: String
     }]
 })
 
