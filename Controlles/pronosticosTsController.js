@@ -23,9 +23,7 @@ const configuracionMulter = {
     },
 }
 
-// pasar la configuración y el campo
 const upload = multer(configuracionMulter).single('archivo');
-
 
 exports.subirImagen = (req, res, next) => {
     upload(req, res, function(error) {
@@ -115,7 +113,8 @@ exports.subirpronostico = async (req, res, next) => {
         if(!pronostico) {
             const testData = new Pronosticos({
                 fecha,
-                propiedades: newPronostico
+                propiedades: newPronostico,
+                graficas: []
             })
             await testData.save()
             res.status(200).json({ mensaje: "Pronostico agregado" })
@@ -166,7 +165,6 @@ exports.editarPronostico = async (req, res, next) => {
             archivo: req.file.filename
         }
 
-
         let index = pronostico.propiedades.findIndex(x => x.variable === newPronostico.variable &&  x.hora === newPronostico.hora)
 
         if(index == -1) {
@@ -193,4 +191,23 @@ exports.editarPronostico = async (req, res, next) => {
         console.log(error)
         next()
     }
-} 
+}
+
+exports.eliminarPronostico = async (req, res, next) => {
+    try {
+        const { fecha } = req.params
+        const regex = /^[0-9]{4}-(((0[13578]|(10|12))-(0[1-9]|[1-2][0-9]|3[0-1]))|(02-(0[1-9]|[1-2][0-9]))|((0[469]|11)-(0[1-9]|[1-2][0-9]|30)))$/
+        
+        if(!regex.test(fecha)) {
+            res.status(400).json({ mensaje: 'formato de fecha invalido' })
+            return
+        }
+
+        const pronostico =  await Pronosticos.findOne({ fecha: fecha })
+
+        await pronostico.destroy()
+
+    } catch (error) {
+        
+    }
+}

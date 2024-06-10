@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+require('dotenv').config({path: '../Middleware/.env'})
 
 module.exports = (req, res, next) => {
     const authHeader = req.get('Authorization')
@@ -12,9 +13,12 @@ module.exports = (req, res, next) => {
     const token = authHeader.split(' ')[1]
     let revisarToken
     try {
-        revisarToken = jwt.verify(token, 'LLAVESECRETA')
+        revisarToken = jwt.verify(token, process.env.LLAVESECRETA)
+        const { id } = revisarToken
+        req.id = id
     } catch (error) {
-        error.statusCode = 500
+        console.log(error)
+        error.statusCode = 401
         throw error
     }
 

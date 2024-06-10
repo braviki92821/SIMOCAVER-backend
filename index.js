@@ -6,6 +6,9 @@ const path = require('path')
 const cors = require('cors')
 require('dotenv').config({path: '.env'})
 require('./Models/Pronosticos')
+require('./Models/PronosticosTs')
+require('./Models/Usuarios')
+require('./Models/Bitacora')
 const host = '127.0.0.1'
 const port = 3000 || process.env.PORT
 
