@@ -15,10 +15,16 @@ module.exports = (req, res, next) => {
     try {
         revisarToken = jwt.verify(token, process.env.LLAVESECRETA)
         const { id } = revisarToken
-        req.id = id
+        req.usuarioId = id
     } catch (error) {
-        console.log(error)
         error.statusCode = 401
+        if(error.message === 'jwt expired') {
+            return res.status(401).json( { mensaje: 'Token expirado vuelva a iniciar sesion'} )
+        }
+
+        if(error.message === 'invalid signature') {
+            return res.status(401).json( { mensaje: 'Token alterado o invalido'} )
+        }
         throw error
     }
 

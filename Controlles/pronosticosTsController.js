@@ -81,6 +81,7 @@ exports.obtenerpronostico = async (req, res, next) => {
 exports.subirpronostico = async (req, res, next) => {
     
     try{
+        console.log(req.usuarioId)
         const { fecha } = req.params
         const { variable, hora } = req.body
 
