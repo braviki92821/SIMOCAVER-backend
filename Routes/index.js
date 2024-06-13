@@ -23,9 +23,13 @@ module.exports = function() {
 
     router.delete('/pronostico/:fecha', auth)
 
+    router.post('/pronostico/grafica/:fecha', pronosticosTsController.subirImagen, pronosticosTsController.subirgrafica)
+
     router.post('/auth/registrar', usuariosController.registrarUsuario)
 
     router.post('/auth/autenticar', usuariosController.autenticarUsuario)
+
+    router.get('/auth/validarSesion', auth, usuariosController.autenticado)
 
     return router
 }

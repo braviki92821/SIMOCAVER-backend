@@ -7,7 +7,11 @@ const configuracionMulter = {
     limits: { fileSize: 200000},
     storage: fileStorage = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, __dirname+'../../uploads/test/');
+            const destino = __dirname + `../../uploads/${req.params.fecha}/`
+            if(!fs.existsSync(destino)) {
+                fs.mkdirSync(destino, { recursive: true } )
+            }
+            cb(null, destino);
         },
         filename: (req, file, cb) => {
             const extension = file.mimetype.split('/')[1]
@@ -81,7 +85,6 @@ exports.obtenerpronostico = async (req, res, next) => {
 exports.subirpronostico = async (req, res, next) => {
     
     try{
-        console.log(req.usuarioId)
         const { fecha } = req.params
         const { variable, hora } = req.body
 
@@ -208,6 +211,17 @@ exports.eliminarPronostico = async (req, res, next) => {
 
         await pronostico.destroy()
 
+    } catch (error) {
+        
+    }
+}
+
+exports.subirgrafica = async (req, res, next) => {
+    try {
+        const { fecha } = req.params
+        const { variable } = req.body
+
+        const regex = /^[0-9]{4}-(((0[13578]|(10|12))-(0[1-9]|[1-2][0-9]|3[0-1]))|(02-(0[1-9]|[1-2][0-9]))|((0[469]|11)-(0[1-9]|[1-2][0-9]|30)))$/
     } catch (error) {
         
     }

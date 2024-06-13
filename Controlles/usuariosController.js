@@ -40,3 +40,10 @@ exports.autenticarUsuario = async (req, res, next) => {
         }
     }
 }
+
+exports.autenticado = (req, res) => {
+    if(!req.usuarioId) {
+       return res.status(200).json({ mensaje: 'token expirado o invalido', auth: false })
+    }
+    res.status(200).json({ auth: true })
+}

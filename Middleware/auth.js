@@ -5,9 +5,7 @@ module.exports = (req, res, next) => {
     const authHeader = req.get('Authorization')
 
     if(!authHeader) {
-        const error = new Error('No autenticado, no hay jwt')
-        error.statusCode = 401
-        throw error
+        return res.status(401).json( { mensaje: 'No autenticado, no hay jwt', auth: false } )
     }
 
     const token = authHeader.split(' ')[1]
@@ -19,11 +17,11 @@ module.exports = (req, res, next) => {
     } catch (error) {
         error.statusCode = 401
         if(error.message === 'jwt expired') {
-            return res.status(401).json( { mensaje: 'Token expirado vuelva a iniciar sesion'} )
+            return res.status(401).json( { mensaje: 'Token expirado vuelva a iniciar sesion', auth: false} )
         }
 
         if(error.message === 'invalid signature') {
-            return res.status(401).json( { mensaje: 'Token alterado o invalido'} )
+            return res.status(401).json( { mensaje: 'Token alterado o invalido', auth: false } )
         }
         throw error
     }
