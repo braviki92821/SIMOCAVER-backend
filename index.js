@@ -13,7 +13,7 @@ const host = '127.0.0.1'
 const port = 3000 || process.env.PORT
 
 mongosee.Promise = global.Promise
-mongosee.connect('mongodb://simocaver:password@192.168.1.43:27017/simocaver?authSource=admin', {
+mongosee.connect('mongodb://root:password@172.16.17.2:27017/simocaver?authSource=admin', {
   useNewUrlParser: true
 })
 //mongodb://root:password@172.16.17.2:27017/ 

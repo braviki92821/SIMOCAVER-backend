@@ -3,7 +3,8 @@ const Schema = mongoose.Schema
 
 const pronosticosTsSchema = new Schema({
     fecha: {
-        type: String
+        type: String,
+        unique: true
     },
     propiedades: [{
         variable: String,

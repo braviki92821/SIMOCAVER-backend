@@ -23,7 +23,7 @@ module.exports = function() {
 
     router.delete('/pronostico/:fecha', auth)
 
-    router.post('/pronostico/grafica/:fecha', pronosticosTsController.subirImagen, pronosticosTsController.subirgrafica)
+    router.post('/pronostico/grafica/:fecha', auth, pronosticosTsController.subirImagen, pronosticosTsController.subirgrafica)
 
     router.post('/auth/registrar', usuariosController.registrarUsuario)
 

@@ -222,6 +222,39 @@ exports.subirgrafica = async (req, res, next) => {
         const { variable } = req.body
 
         const regex = /^[0-9]{4}-(((0[13578]|(10|12))-(0[1-9]|[1-2][0-9]|3[0-1]))|(02-(0[1-9]|[1-2][0-9]))|((0[469]|11)-(0[1-9]|[1-2][0-9]|30)))$/
+
+        if(!regex.test(fecha)) {
+            res.status(400).json({ mensaje: 'formato de fecha invalido' })
+            return
+        }
+
+        if(!variable) {
+            res.status(400).json({ mensaje: 'Cuerpo de la solicitud no valido' })
+            return
+        }
+
+        const pronostico =  await Pronosticos.findOne({ fecha: fecha })
+
+        const grafica = {
+            variable: req.body.variable,
+            archivo: req.file.filename
+        }
+
+        if(!pronostico) {
+            const testData = new Pronosticos({
+                fecha,
+                propiedades: [],
+                graficas: grafica
+            })
+            await testData.save()
+            res.status(200).json({ mensaje: "Grafica de pronostico agregado" })
+            return
+        }
+
+        pronostico.graficas.push(grafica)
+        await pronostico.save()
+        res.status(200).json({ mensaje: "Grafica de pronostico agregado" })
+
     } catch (error) {
         
     }
