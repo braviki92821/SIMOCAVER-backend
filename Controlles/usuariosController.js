@@ -30,7 +30,7 @@ exports.autenticarUsuario = async (req, res, next) => {
         } else {
             const token = jwt.sign({
                 email: usuario.email,
-                nombre: usuario.nombre,
+                tipo: usuario.tipoUsuario,
                 id: usuario._id
             }, process.env.LLAVESECRETA,{
                 expiresIn: '1h'
