@@ -6,20 +6,18 @@ const path = require('path')
 const cors = require('cors')
 require('dotenv').config({path: '.env'})
 require('./Models/Pronosticos')
-require('./Models/PronosticosTs')
 require('./Models/Usuarios')
 require('./Models/Bitacora')
-const host = '127.0.0.1'
 const port = 3000 || process.env.PORT
 
 mongosee.Promise = global.Promise
-mongosee.connect('mongodb://root:password@172.16.17.2:27017/simocaver?authSource=admin', {
+mongosee.connect('mongodb://'+process.env.USERMONGO+':'+process.env.PASSWORDMONGO+'@'+process.env.SERVERMONGODB+'/'+process.env.DATABASE+'?authSource=admin', {
   useNewUrlParser: true
 })
 //mongodb://root:password@172.16.17.2:27017/ 
-//mongodb://simocaver:password@192.168.1.43:27017/
+//mongodb://simocaver:password@192.168.1.45:27017/
 const app = express()
-
+ 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended:true }))
 
@@ -44,6 +42,6 @@ app.use(cors())
 app.use('/', routes())
 app.use("/uploads", express.static(path.resolve(__dirname, 'uploads')));
 
-app.listen(port, host, () => {
-  console.log('http://'+host+':'+port)
+app.listen(port, () => {
+  console.log('http://:'+port)
 })

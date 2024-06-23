@@ -1,33 +1,30 @@
 const express = require('express')
 const router = express.Router()
 const pronosticosController = require('../Controlles/pronosticosController')
-const pronosticosTsController = require('../Controlles/pronosticosTsController')
 const usuariosController = require('../Controlles/usuariosController')
 const auth = require('../Middleware/auth')
 
 module.exports = function() {
 
-    // router.get('/pronostico', pronosticosController.obtenerpronosticos)
+    router.get('/pronostico', pronosticosController.obtenerpronosticos)
 
-    // router.get('/pronostico/:fecha', pronosticosController.obtenerpronostico)
+    router.get('/pronostico/:fecha', pronosticosController.obtenerpronostico)
 
-    // router.post('/pronostico', pronosticosController.subirImagen, pronosticosController.subirpronostico)
+    router.post('/pronostico/:fecha', auth, pronosticosController.subirImagen, pronosticosController.subirpronostico)
 
-    router.get('/pronostico', pronosticosTsController.obtenerpronosticos)
+    router.put('/pronostico/:fecha', auth, pronosticosController.subirImagen, pronosticosController.editarPronostico)
 
-    router.get('/pronostico/:fecha', pronosticosTsController.obtenerpronostico)
+    router.delete('/pronostico/:fecha', auth, pronosticosController.eliminarPronostico)
 
-    router.post('/pronostico/:fecha', auth, pronosticosTsController.subirImagen, pronosticosTsController.subirpronostico)
+    router.post('/pronostico/grafica/:fecha', auth, pronosticosController.subirImagen, pronosticosController.subirgrafica)
 
-    router.put('/pronostico/:fecha', auth, pronosticosTsController.subirImagen, pronosticosTsController.editarPronostico)
+    router.put('/pronostico/grafica/:fecha', auth, pronosticosController.subirImagen, pronosticosController.editarGrafica)
 
-    router.delete('/pronostico/:fecha', auth)
-
-    router.post('/pronostico/grafica/:fecha', auth, pronosticosTsController.subirImagen, pronosticosTsController.subirgrafica)
-
-    router.post('/auth/registrar', usuariosController.registrarUsuario)
+    router.post('/auth/registrar', auth, usuariosController.registrarUsuario)
 
     router.post('/auth/autenticar', usuariosController.autenticarUsuario)
+
+    router.get('/auth/usuarios', auth, usuariosController.obtenerUsuarios)
 
     router.get('/auth/validarSesion', auth, usuariosController.autenticado)
 

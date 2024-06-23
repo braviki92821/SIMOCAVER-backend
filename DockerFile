@@ -1,6 +1,6 @@
-FROM node:14
+FROM node:16.14.2
 
-WORKDIR /app
+WORKDIR /home/simocaver-backend
 
 COPY package*.json ./
 

@@ -2,29 +2,19 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const pronosticosSchema = new Schema({
-    variable: {
-        type: String,
-        trim: true
-    },
     fecha: {
-        type: String
+        type: String,
+        unique: true
     },
-    hora: {
-        type: String
-    },
-    archivo: {
-        type: String
-    }
+    propiedades: [{
+        variable: String,
+        hora: Number,
+        archivo: String
+    }],
+    graficas: [{
+        variable: String,
+        archivo: String
+    }]
 })
 
 module.exports = mongoose.model('Pronosticos', pronosticosSchema)
-
-
-
-//   {
-// 
-//      variable
-//      fecha
-//      archivo [string]
-// 
-//   }
