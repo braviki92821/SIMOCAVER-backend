@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken')
-require('dotenv').config({path: '../Middleware/.env'})
 
 module.exports = (req, res, next) => {
     const authHeader = req.get('Authorization')
-
+    
     if(!authHeader) {
         return res.status(401).json( { mensaje: 'No autenticado, no hay jwt', auth: false } )
     }

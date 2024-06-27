@@ -21,7 +21,10 @@ const Usuarios = new Schema({
     tipoUsuario: {
         type: String, 
         required: true
-    }
+    },
+    token: String,
+    expire: Date,
+    estado: String
 })
 
 Usuarios.pre('save', async function(next){

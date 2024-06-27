@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const pronosticosController = require('../Controlles/pronosticosController')
 const usuariosController = require('../Controlles/usuariosController')
+const respaldoController = require('../Controlles/respaldoController')
 const auth = require('../Middleware/auth')
 
 module.exports = function() {
@@ -24,9 +25,17 @@ module.exports = function() {
 
     router.post('/auth/autenticar', usuariosController.autenticarUsuario)
 
+    router.post('/auth/formReset', usuariosController.olvideContraseña)
+
+    router.post('/auth/reset/:token', usuariosController.resetPassword)
+
     router.get('/auth/usuarios', auth, usuariosController.obtenerUsuarios)
 
     router.get('/auth/validarSesion', auth, usuariosController.autenticado)
+
+    router.put('/auth/eliminar', auth, usuariosController.eliminarUsuario)
+
+    router.post('/imagenes/:fecha', auth,respaldoController.subirImagen, respaldoController.subirImagenes)
 
     return router
 }

@@ -40,7 +40,8 @@ app.use(bodyParser.urlencoded({ extended:true }))
 app.use(cors())
 
 app.use('/', routes())
-app.use("/uploads", express.static(path.resolve(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
+
 
 app.listen(port, () => {
   console.log('http://:'+port)

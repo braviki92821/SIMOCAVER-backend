@@ -1,14 +1,15 @@
 const Usuarios = require('../Models/Usuarios')
 const jwt = require('jsonwebtoken')
 const email = require('../Helpers/email')
-require('dotenv').config({ path: '../Controlles/.env' })
+const crypto = require('crypto')
 
 exports.registrarUsuario = async (req, res) => {
-    const usuario = new Usuarios(req.body)
-
-    const generarPassword = Math.random().toString(36).substring(2)
-    usuario.password = generarPassword
     try {
+        const usuario = new Usuarios(req.body)
+        const generarPassword = Math.random().toString(36).substring(2)
+        usuario.password = generarPassword
+        usuario.estado = 'Activo'
+
         await email.enviarEmail({
             email: req.body.email,
             nombre: req.body.nombre,
@@ -28,9 +29,13 @@ exports.autenticarUsuario = async (req, res, next) => {
     const usuario = await Usuarios.findOne({ email })
 
     if(!usuario) {
-        await res.status(401).json({ mensaje: 'Ese usuario no existe' })
+        res.status(404).json({ mensaje: 'Ese usuario no existe' })
         next()
     } else {
+        if(usuario.estado != 'activo'){
+            res.status(401).json({ mensaje: 'Usuario Invalido' })
+            return
+        }
         if(!usuario.compararPassword(password)) {
             await res.status(401).json({ mensaje: 'Password Incorrecto' })
             next()
@@ -65,6 +70,96 @@ exports.obtenerUsuarios = async (req, res, next) => {
         }
 
         res.status(200).json(usuarios)
+    } catch (error) {
+        next()
+    }
+} 
+
+exports.olvideContraseña = async (req, res, next) => {
+    try {       
+        const { correo } = req.body
+        const usuario = await Usuarios.findOne({ email: correo })
+
+        if(!usuario) {
+            res.status(404).json({ mensaje: 'Correo no registrado '})
+            return
+        }
+    
+        usuario.token = crypto.randomBytes(20).toString('hex')
+        usuario.expire = Date.now() + 3600000
+    
+        await email.resetPasswordEmail({
+            email: usuario.email,
+            nombre: usuario.nombre,
+            token: usuario.token
+        })
+
+        await usuario.save()
+        res.status(200).json({ mensaje: 'Revisa tu correo para las instrucciones'})
+    } catch (error) {
+        console.log(error)
+        next()
+    }
+}
+
+exports.resetPassword = async (req, res, next) => {
+    try {
+        const { token } = req.params
+        const { password, confirmar } = req.body
+        const usuario = await Usuarios.findOne({
+            token: token,
+            expire: {
+                $gt: Date.now()
+            }
+        })
+
+        if(!usuario) {
+            res.status(404).json({ mensaje: 'Token expirado o no valido'})
+            return
+        }
+
+        if(password != confirmar){
+            res.status(400).json({ mensaje: 'Contraseñas no son iguales'})
+            return
+        }
+
+        usuario.password = password
+        usuario.token = undefined
+        usuario.expire = undefined
+
+        await usuario.save()
+        res.status(200).json({ mensaje: 'tu contraseña ha sido reestablecida vuelva a iniciar sesion'})
+    } catch (error) {
+        next()
+    }
+}
+
+exports.eliminarUsuario = async (req, res, next) => {
+    try {
+        const { id, estado } = req.body
+
+        const usuario = await Usuarios.findById(id)
+
+        if(!usuario) {
+            res.status(404).json({ mensaje: 'Este usuario no existe' })
+            return
+        }
+
+        if(usuario.estado != estado) {
+            res.status(400).json({ mensaje: 'Estado no coincidente' })
+            return
+        }
+
+        if(usuario.estado === 'activo'){
+            usuario.estado = 'inactivo'
+            await usuario.save()
+            res.status(200).json({mensaje:'Este usuario ha sido inhabilitado'})
+            return
+        }
+
+        usuario.estado = 'activo'
+        await usuario.save()
+        res.status(200).json({mensaje:'Este usuario ha sido activado'})
     } catch (error) {
         next()
     }

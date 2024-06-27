@@ -108,8 +108,6 @@ exports.subirpronostico = async (req, res, next) => {
             return
         }
 
-        
-
         const pronostico =  await Pronosticos.findOne({ fecha: fecha })
 
         const newPronostico = {
@@ -131,14 +129,14 @@ exports.subirpronostico = async (req, res, next) => {
                 graficas: []
             })
             await testData.save()
+            await bitacora.save()
             res.status(200).json({ mensaje: "Pronostico agregado" })
-            await pronostico.save()
             return
         }
 
         pronostico.propiedades.push(newPronostico)
-
-        await bitacora.save()
+        
+        await pronostico.save()
         res.status(200).json({ mensaje: "Pronostico agregado" })
     } catch(error) {
         console.log(error)
@@ -236,8 +234,6 @@ exports.eliminarPronostico = async (req, res, next) => {
         }
 
         const autorizacion = usuario.compararPassword(req.body.password)
-
-        
 
         if(!pronostico) {
             res.status(404).json({ mensaje: 'No hay pronostico para eliminar'})
