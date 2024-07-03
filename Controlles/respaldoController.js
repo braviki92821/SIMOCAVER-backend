@@ -32,14 +32,14 @@ exports.subirImagen = (req, res, next) => {
         if(error) {
             if(error instanceof multer.MulterError) {
                 if(error.code === 'LIMIT_FILE_SIZE') {
-                    res.status(200).json({ mensaje: 'El archivo es muy grande' })
+                    res.status(400).json({ mensaje: 'El archivo es muy grande', ok: false })
                     return
                 } else {
-                    res.status(200).json({ mensaje: error.message })
+                    res.status(400).json({ mensaje: error.message, ok: false })
                     return
                 }
             } else if(error.hasOwnProperty('message')) {
-                res.status(200).json({ mensaje: error.message })
+                res.status(400).json({ mensaje: error.message, ok: false })
                 return
             }
         } else {
@@ -50,8 +50,8 @@ exports.subirImagen = (req, res, next) => {
 
 exports.subirImagenes = (req, res, next) => {
     if(!req.files){
-        res.status(400).json({mensaje:'Error de subida'})
+        res.status(400).json({ mensaje:'Error de subida', ok: false })
         return
     }
-    res.status(200).json({mensaje: 'Imagenes subidas al servidor'})
+    res.status(200).json({ mensaje: 'Imagenes subidas al servidor', ok: true })
 }

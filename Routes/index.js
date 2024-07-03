@@ -35,7 +35,9 @@ module.exports = function() {
 
     router.put('/auth/eliminar', auth, usuariosController.eliminarUsuario)
 
-    router.post('/imagenes/:fecha', auth,respaldoController.subirImagen, respaldoController.subirImagenes)
+    router.post('/imagenes/:fecha', auth, respaldoController.subirImagen, respaldoController.subirImagenes)
+
+    router.get('/bitacora', auth, pronosticosController.obtenerBitacora)
 
     return router
 }

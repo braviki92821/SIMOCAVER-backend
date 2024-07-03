@@ -8,7 +8,7 @@ exports.registrarUsuario = async (req, res) => {
         const usuario = new Usuarios(req.body)
         const generarPassword = Math.random().toString(36).substring(2)
         usuario.password = generarPassword
-        usuario.estado = 'Activo'
+        usuario.estado = 'activo'
 
         await email.enviarEmail({
             email: req.body.email,
@@ -17,10 +17,9 @@ exports.registrarUsuario = async (req, res) => {
         })
 
         await usuario.save()
-        res.json({ mensaje: 'Usuario Creado Correctamente' })
+        res.json({ mensaje: 'Usuario Creado Correctamente', ok: true })
     } catch (error) {
-        console.log(error)
-        res.json({mensaje: 'Hubo un error'})
+        res.json({ mensaje: 'Hubo un error', ok: false })
     }
 }
 
@@ -29,15 +28,15 @@ exports.autenticarUsuario = async (req, res, next) => {
     const usuario = await Usuarios.findOne({ email })
 
     if(!usuario) {
-        res.status(404).json({ mensaje: 'Ese usuario no existe' })
+        res.status(404).json({ mensaje: 'Ese usuario no existe', ok: false })
         next()
     } else {
         if(usuario.estado != 'activo'){
-            res.status(401).json({ mensaje: 'Usuario Invalido' })
+            res.status(401).json({ mensaje: 'Usuario Invalido', ok: false })
             return
         }
         if(!usuario.compararPassword(password)) {
-            await res.status(401).json({ mensaje: 'Password Incorrecto' })
+            await res.status(401).json({ mensaje: 'Password Incorrecto', ok: false })
             next()
         } else {
             const token = jwt.sign({
@@ -63,9 +62,9 @@ exports.autenticado = (req, res) => {
 exports.obtenerUsuarios = async (req, res, next) => {
 
     try {
-        const usuarios = await Usuarios.find({ _id: { $ne: req.usuarioId } })
+        const usuarios = await Usuarios.find({ _id: { $ne: req.usuarioId } }).select("-password")
         if(!usuarios) {
-            res.status(404).json({mensaje: 'No hay usuarios' })
+            res.status(404).json({mensaje: 'No hay usuarios', ok: false })
             return
         }
 
@@ -81,7 +80,7 @@ exports.olvideContraseña = async (req, res, next) => {
         const usuario = await Usuarios.findOne({ email: correo })
 
         if(!usuario) {
-            res.status(404).json({ mensaje: 'Correo no registrado '})
+            res.status(404).json({ mensaje: 'Correo no registrado', ok: false })
             return
         }
     
@@ -95,7 +94,7 @@ exports.olvideContraseña = async (req, res, next) => {
         })
 
         await usuario.save()
-        res.status(200).json({ mensaje: 'Revisa tu correo para las instrucciones'})
+        res.status(200).json({ mensaje: 'Revisa tu correo para las instrucciones', ok: true })
     } catch (error) {
         console.log(error)
         next()
@@ -114,12 +113,12 @@ exports.resetPassword = async (req, res, next) => {
         })
 
         if(!usuario) {
-            res.status(404).json({ mensaje: 'Token expirado o no valido'})
+            res.status(404).json({ mensaje: 'Token expirado o no valido', ok: false })
             return
         }
 
         if(password != confirmar){
-            res.status(400).json({ mensaje: 'Contraseñas no son iguales'})
+            res.status(400).json({ mensaje: 'Contraseñas no son iguales', ok: false })
             return
         }
 
@@ -128,7 +127,7 @@ exports.resetPassword = async (req, res, next) => {
         usuario.expire = undefined
 
         await usuario.save()
-        res.status(200).json({ mensaje: 'tu contraseña ha sido reestablecida vuelva a iniciar sesion'})
+        res.status(200).json({ mensaje: 'tu contraseña ha sido reestablecida vuelva a iniciar sesion', ok: true})
     } catch (error) {
         next()
     }
@@ -141,25 +140,25 @@ exports.eliminarUsuario = async (req, res, next) => {
         const usuario = await Usuarios.findById(id)
 
         if(!usuario) {
-            res.status(404).json({ mensaje: 'Este usuario no existe' })
+            res.status(404).json({ mensaje: 'Este usuario no existe', ok: false })
             return
         }
 
         if(usuario.estado != estado) {
-            res.status(400).json({ mensaje: 'Estado no coincidente' })
+            res.status(400).json({ mensaje: 'Estado no coincidente', ok: false })
             return
         }
 
         if(usuario.estado === 'activo'){
             usuario.estado = 'inactivo'
             await usuario.save()
-            res.status(200).json({mensaje:'Este usuario ha sido inhabilitado'})
+            res.status(200).json({ mensaje:'Este usuario ha sido inhabilitado', ok: true})
             return
         }
 
         usuario.estado = 'activo'
         await usuario.save()
-        res.status(200).json({mensaje:'Este usuario ha sido activado'})
+        res.status(200).json({ mensaje:'Este usuario ha sido activado', ok: true })
     } catch (error) {
         next()
     }
