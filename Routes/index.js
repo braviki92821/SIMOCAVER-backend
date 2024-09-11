@@ -39,5 +39,7 @@ module.exports = function() {
 
     router.get('/bitacora', auth, pronosticosController.obtenerBitacora)
 
+    router.get('/download/:fecha', respaldoController.descargarImagenes)
+
     return router
 }
