@@ -44,7 +44,7 @@ exports.autenticarUsuario = async (req, res, next) => {
                 tipo: usuario.tipoUsuario,
                 id: usuario._id
             }, process.env.LLAVESECRETA,{
-                expiresIn: '1h'
+                expiresIn: '2h'
             })
 
             res.status(200).json({token})

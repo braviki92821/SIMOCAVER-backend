@@ -6,7 +6,7 @@ const Usuarios = require('../Models/Usuarios')
 const Bitacora = require('../Models/Bitacora')
 
 const configuracionMulter = {
-    limits: { fileSize: 200000},
+    limits: { fileSize: 500000},
     storage: fileStorage = multer.diskStorage({
         destination: (req, file, cb) => {
             const destino = __dirname + `../../uploads/${req.params.fecha}/`
